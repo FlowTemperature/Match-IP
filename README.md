@@ -30,7 +30,7 @@ Uma ferramenta web leve e eficiente para análise de endereços IP, integrando d
 
 ```bash
 # 1. Clone o repositório
-git clone https://github.com/FlowTemperature/match-ip.git
+git clone https://github.com/FlowTemperature/match-IP.git
 cd match-ip
 
 # 2. Instale as dependências
