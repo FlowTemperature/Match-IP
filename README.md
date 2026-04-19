@@ -1,40 +1,134 @@
-# 🔍 Match IP
+<div align="center">
 
-**Scanner & Analisador de Ameaças em Tempo Real**
+# 🛡 Match IP
 
-Uma ferramenta web leve e eficiente para análise de endereços IP, integrando dados do AbuseIPDB com análise de inteligência artificial para fornecer relatórios de segurança detalhados.
+**Scanner de Ameaças com IA — gratuito, sem login, sem chave de API**
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
+[![npm](https://img.shields.io/npm/v/@flowtemperature/matchip?color=00aaff&label=npm&style=flat-square)](https://www.npmjs.com/package/@flowtemperature/matchip)
+[![license](https://img.shields.io/badge/license-MIT-00e5a0?style=flat-square)](./LICENSE)
+[![node](https://img.shields.io/badge/node-%3E%3D16-blue?style=flat-square)](https://nodejs.org)
+[![made with](https://img.shields.io/badge/made%20with-Node.js-green?style=flat-square)](https://nodejs.org)
 
----
-
-## 📋 Funcionalidades
-
-- **Verificação de IP em Tempo Real** – Consulta AbuseIPDB para obter score de confiança, reportes e histórico
-- **Análise de IA Integrada** – Gera relatórios técnicos interpretados por LLM (Llama 3.1)
-- **Interface Web Moderna** – UI responsiva com tema escuro e visualização intuitiva de dados
-- **Rotação de API Keys** – Suporte a múltiplas chaves AbuseIPDB e Flow para evitar rate limits
-- **Zero Dependências Complexas** – Apenas Python padrão + `python-dotenv`
+</div>
 
 ---
 
-## 🚀 Instalação
+## O que é?
 
-### Pré-requisitos
+**Match IP** é uma CLI open source que analisa qualquer endereço IP em segundos:
 
-- Python 3.8 ou superior
-- Chaves de API válidas (veja abaixo)
+- 🔍 Score de abuso via **AbuseIPDB**
+- 🌍 País, ISP, domínio e tipo de uso
+- 🧅 Detecção de **nós Tor**
+- 🤖 **Análise de IA** com Llama 3.1 — nível de ameaça, perfil e recomendação
+- 📋 Últimos reportes de abuso
 
-### Passos
+Sem login. Sem cadastro. Sem chave de API. Só rodar.
+
+---
+
+## Instalação
 
 ```bash
-# 1. Clone o repositório
-git clone https://github.com/FlowTemperature/match-IP.git
-cd match-ip
+npm install -g @flowtemperature/matchip
+```
 
-# 2. Instale as dependências
-pip install python-dotenv
+ou sem instalar:
 
-# 3. Configure as variáveis de ambiente
-cp .env.example .env  # ou crie o arquivo .env manualmente
+```bash
+npx @flowtemperature/matchip 8.8.8.8
+```
+
+---
+
+## Uso
+
+```bash
+matchip <ip>       # Analisa um IP
+matchip ping       # Verifica se a API está online
+matchip help       # Ajuda
+```
+
+### Exemplos
+
+```bash
+matchip 8.8.8.8
+matchip 185.220.101.1
+matchip 1.1.1.1
+```
+
+---
+
+## Output
+
+```
+════════════════════════════════════════════════════════
+    🛡  Match IP  v1.0.1
+    Scanner de Ameaças com IA · by FlowTemperature
+════════════════════════════════════════════════════════
+
+  🔍 185.220.101.1    ██ CRÍTICO ██
+
+  ████████████████████████████████  100/100
+
+  🗺  País          DE
+  🏢 ISP            Artikel10 e.V.
+  🔗 Domínio        artikel10.org
+  📋 Reportes       135
+  🧅 Nó Tor         SIM ⚠️
+  📅 Último rep.    19/04/2026
+
+  🤖 Análise de IA
+  NÍVEL: Alto
+  PERFIL: Exit node Tor com score máximo, infraestrutura usada para anonimizar tráfego malicioso
+  AÇÃO: bloquear — score 100/100 com 135 reportes confirmados e nó Tor ativo
+
+════════════════════════════════════════════════════════
+  🔗 https://www.abuseipdb.com/check/185.220.101.1
+════════════════════════════════════════════════════════
+```
+
+---
+
+## Por que Match IP é diferente?
+
+| Feature | Match IP | Outros |
+|---|---|---|
+| Sem login | ✅ | ❌ |
+| Sem chave de API | ✅ | ❌ |
+| Análise com IA | ✅ | ❌ |
+| Open source | ✅ | ❌ |
+| Gratuito | ✅ | ❌ |
+| CLI + Web | ✅ | raramente |
+
+---
+
+## Website
+
+Além da CLI, existe uma interface web completa disponível em:
+
+> **[matchip.squareweb.app](https://matchip.squareweb.app)**
+
+---
+
+## Variável de ambiente
+
+Se quiser apontar para outra instância da API:
+
+```bash
+MATCHIP_API=https://minha-api.com matchip 8.8.8.8
+```
+
+---
+
+## Licença
+
+[MIT](./LICENSE) — faça o que quiser, só mantém os créditos. 🤝
+
+---
+
+<div align="center">
+
+Feito com 💙 por [FlowTemperature](https://github.com/FlowTemperature) · com ajuda de [Claude](https://claude.ai)
+
+</div>
