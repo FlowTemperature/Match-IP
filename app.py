@@ -118,26 +118,26 @@ def check_visitor(ip):
 # ─── Páginas de erro ──────────────────────────────────────────────────────────
 
 def page_blocked():
-    return b"""<!DOCTYPE html><html><head><meta charset="UTF-8"><title>403</title>
+    return """<!DOCTYPE html><html><head><meta charset="UTF-8"><title>403</title>
 <style>*{margin:0;padding:0;box-sizing:border-box}
 body{font-family:sans-serif;background:#050d1a;color:#ff4466;
 display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;gap:16px}
 h1{font-size:5rem;background:linear-gradient(135deg,#ff4466,#ff8800);
 -webkit-background-clip:text;-webkit-text-fill-color:transparent}
 p{color:#7aabdd;font-size:.95rem}a{color:#00aaff}</style></head>
-<body><h1>403</h1><p>Seu IP foi identificado como malicioso e está bloqueado.</p>
-<p style="font-size:.8rem;color:#3a6090">Acredita que é um erro? <a href="https://www.abuseipdb.com" target="_blank">Verifique seu IP</a></p>
-</body></html>"""
+<body><h1>403</h1><p>Seu IP foi identificado como malicioso e est&aacute; bloqueado.</p>
+<p style="font-size:.8rem;color:#3a6090">Acredita que &eacute; um erro? <a href="https://www.abuseipdb.com" target="_blank">Verifique seu IP</a></p>
+</body></html>""".encode("utf-8")
 
 def page_ratelimit():
-    return b"""<!DOCTYPE html><html><head><meta charset="UTF-8"><title>429</title>
+    return """<!DOCTYPE html><html><head><meta charset="UTF-8"><title>429</title>
 <style>*{margin:0;padding:0;box-sizing:border-box}
 body{font-family:sans-serif;background:#050d1a;color:#ffcc00;
 display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;gap:16px}
 h1{font-size:5rem;background:linear-gradient(135deg,#ffcc00,#ff8800);
 -webkit-background-clip:text;-webkit-text-fill-color:transparent}
 p{color:#7aabdd;font-size:.95rem}</style></head>
-<body><h1>429</h1><p>Muitas requisições. Aguarde um momento e tente novamente.</p></body></html>"""
+<body><h1>429</h1><p>Muitas requisi&ccedil;&otilde;es. Aguarde um momento e tente novamente.</p></body></html>""".encode("utf-8")
 
 # ─── HTML Principal ───────────────────────────────────────────────────────────
 
