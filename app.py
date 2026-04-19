@@ -291,7 +291,7 @@ a:hover { text-decoration: underline; }
   <span style="font-size:.65rem;font-family:'JetBrains Mono',monospace;background:linear-gradient(90deg,#0a3a6a,#0a5a4a);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:.5px">
     Criado por <a href="https://github.com/FlowTemperature" target="_blank" style="background:linear-gradient(90deg,#1a6aaa,#0a9a7a);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-decoration:none;font-weight:700">FlowTemperature</a>
     &nbsp;·&nbsp;
-    com ajuda de <span href="claude.ai/new" style="background:linear-gradient(90deg,#0a5a9a,#0a4a7a);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:700">Claude</span>
+    com ajuda de <span style="background:linear-gradient(90deg,#0a5a9a,#0a4a7a);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:700">Claude</span>
   </span>
 </div>
 
@@ -421,15 +421,28 @@ class Handler(BaseHTTPRequestHandler):
     def log_message(self, fmt, *args):
         print(f"[{self.address_string()}] {fmt % args}")
 
+    def do_OPTIONS(self):
+        # CORS para a CLI conseguir acessar
+        self.send_response(204)
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        self.end_headers()
+
     def send_json(self, data, status=200):
         body = json.dumps(data, default=str).encode()
         self.send_response(status)
+        self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Content-Type", "application/json")
         self.send_header("Content-Length", len(body))
         self.end_headers()
         self.wfile.write(body)
 
     def do_GET(self):
+        # GET /ping — health check para a CLI
+        if self.path == "/ping":
+            self.send_json({"status": "ok", "version": "1.0.0"}); return
+
         if self.path in ("/", "/index.html"):
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
@@ -454,6 +467,53 @@ class Handler(BaseHTTPRequestHandler):
     def do_POST(self):
         length = int(self.headers.get("Content-Length", 0))
         body   = json.loads(self.rfile.read(length) or b"{}")
+
+        # POST /analyze  — endpoint para a CLI
+        if self.path == "/analyze":
+            ip = body.get("ip", "").strip()
+            if not ip:
+                self.send_json({"error": "IP obrigatório"}, 400); return
+            if not abuse_cycle:
+                self.send_json({"error": "Sem chaves AbuseIPDB"}, 500); return
+
+            abuse_data, _ = json_request(
+                "GET",
+                f"https://api.abuseipdb.com/api/v2/check?ipAddress={urllib.parse.quote(ip)}&maxAgeInDays=90&verbose=true",
+                headers={"Key": next(abuse_cycle), "Accept": "application/json"}
+            )
+            d     = abuse_data.get("data", {})
+            score = d.get("abuseConfidenceScore", 0)
+
+            ai_reply = "IA não disponível."
+            if flow_cycle:
+                prompt = (
+                    f"Você é um especialista sênior em cibersegurança. Analise o IP em português.\n\n"
+                    f"IP: {ip} | Score: {score}/100 | País: {d.get('countryCode')} | "
+                    f"ISP: {d.get('isp')} | Reportes: {d.get('totalReports')} | Tor: {d.get('isTor')}\n\n"
+                    f"Responda em 3 blocos curtos:\n"
+                    f"NÍVEL: (Crítico/Alto/Médio/Baixo/Seguro)\n"
+                    f"PERFIL: (1 linha)\n"
+                    f"AÇÃO: (bloquear/monitorar/ignorar + motivo em 1 linha)"
+                )
+                ai_data, _ = json_request(
+                    "POST",
+                    "https://flow.squareweb.app/v1/chat/completions",
+                    headers={"Content-Type": "application/json", "Authorization": f"Bearer {next(flow_cycle)}"},
+                    data={"model": "llama-3.1-8b-instant", "messages": [{"role": "user", "content": prompt}]}
+                )
+                ai_reply = ai_data.get("choices", [{}])[0].get("message", {}).get("content", "Sem resposta.")
+
+            self.send_json({
+                "ip":            ip,
+                "score":         score,
+                "country":       d.get("countryCode"),
+                "isp":           d.get("isp"),
+                "reports":       d.get("totalReports"),
+                "isTor":         d.get("isTor"),
+                "domain":        d.get("domain"),
+                "lastReportedAt":d.get("lastReportedAt"),
+                "ai":            ai_reply,
+            }); return
 
         if self.path == "/api/flow":
             msg = body.get("message", "")
